@@ -6,6 +6,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import CustomHeaderCheckbox from "./CustomHeaderSelection";
 import { ApiClient, DefaultApi } from "@anansi-lineage/anansi-sdk";
 import { fetchColData, headerNames, fetchColInfo, callFetchAllEnumValues } from "./colInfo";
+
+
 export const Table = () => {
  const [init, setInit] = useState(false);
  const [data, setData] = useState([]);
@@ -16,7 +18,7 @@ export const Table = () => {
  
  var apiClient = new ApiClient();
  apiClient.basePath = "https://datalineage2.azurewebsites.net";
- apiClient.authentications["JWT"].apiKey = "ACCESS_TOKEN";
+ apiClient.authentications["JWT"].apiKey = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiI3NTM1NWM4MS04NTk4LTRiNTEtYjM3ZC05ZGFhMWFkZDU4NjciLCJuYW1lIjoiVHVzaGFyIFNSIiwiZW1haWxzIjpbInR1c2hhci5zckBzdWtldGEuaW4iXSwidGZwIjoiQjJDXzFfc2lnbnVwX3NpZ25pbiIsIm5vbmNlIjoiMSIsInNjcCI6InJlYWQiLCJhenAiOiJjOTBmZWQyMS1iMzhhLTQ5ZDctODE2Ni05MzBlZTg3ZjFiMmUiLCJ2ZXIiOiIxLjAiLCJpYXQiOjE3MTQ2NjAxMTcsImF1ZCI6ImM5MGZlZDIxLWIzOGEtNDlkNy04MTY2LTkzMGVlODdmMWIyZSIsImV4cCI6MTcxNDY2MzcxNywiaXNzIjoiaHR0cHM6Ly9hbmFuc2lodWIuYjJjbG9naW4uY29tLzhlYzE4OWRmLTdkMTYtNDA2NC1hMDJlLTVmYTYzYjY1MWEzZi92Mi4wLyIsIm5iZiI6MTcxNDY2MDExN30.m21bwRnIimVcG_mhfzZ3OOPpukv7qcuO4oF9My6tfZslLeQ8TdNSZc-0iYvzZxhZwJ1cr8yLxHqM8dSmffvDpzj5FdFjOvmaVF6L7tCaUWxbsR8wgkqnF7kqI3u0YuLnjxvP9M7C-dvDVcZ77oWcEXKt4Dpm2HGGp8HrY7vIT7aDp_97P3_cWTNaIxSw28HKVZm-bW38_YqCywJ_uGeQXU8e6ySSMhaj1diFF_pshZkWnsB2LzT7Wv9pOrYOo5cjcX_51DUUW3afVBSeJsq-Nlo0jnzU7nVngTLG2swcTLHQqjtP4l_7mOAhcyaiyP2srtmpVMsgBEevesEDEQ4xiA";
  apiClient.authentications["JWT"].apiKeyPrefix = "Bearer";
  const defaultClient = new DefaultApi(apiClient);
  let tableName = "PropertyInfo";
@@ -107,7 +109,7 @@ export const Table = () => {
       if (props.value !== undefined) {
         return props.value;
       } else {
-        return <img src="grids\src\Loading.gif" />;
+        return <img src="/Loading.gif" />;
       }
     };
     modifiedColDefs[0].headerComponentParams = {
