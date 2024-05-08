@@ -86,23 +86,28 @@ function mapPropertyInfoToColInfo(enumData) {
   return function (PropertyInfo) {
     if (PropertyInfo["Data Type"] !== "Enum") {
       return {
-        headerName: PropertyInfo["Display Name"],
-        field: PropertyInfo["Display Name"],
-        editable: !isReadOnly(PropertyInfo["Property Type"]),
+        propName: PropertyInfo["Property Name"],
+        headerInfo:
+        {
+          headerName: PropertyInfo["Display Name"],
+          field: PropertyInfo["Display Name"],
+          editable: !isReadOnly(PropertyInfo["Property Type"]),
+        }
       };
     } else {
       return {
-        headerName: PropertyInfo["Display Name"],
-        field: PropertyInfo["Display Name"],
-        editable: !isReadOnly(PropertyInfo["Property Type"]),
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-          values: enumData.get(PropertyInfo["Property Name"])
-          
+        propName: PropertyInfo["Property Name"],
+        headerInfo:
+        {
+          headerName: PropertyInfo["Display Name"],
+          field: PropertyInfo["Display Name"],
+          editable: !isReadOnly(PropertyInfo["Property Type"]),
+          cellEditor: 'agSelectCellEditor',
+          cellEditorParams: {
+            values: enumData.get(PropertyInfo["Property Name"])
+          }
         }
-        
-      }
-      ;
+      };
     }
   };
 }
