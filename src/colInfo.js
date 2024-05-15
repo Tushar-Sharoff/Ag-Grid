@@ -90,6 +90,7 @@ function mapPropertyInfoToColInfo(enumData) {
     if (PropertyInfo["Data Type"] !== "Enum") {
       return {
         headerName: PropertyInfo["Display Name"],
+        colId:PropertyInfo["Property Name"],
         field: PropertyInfo["Display Name"],
         editable: !isReadOnly(PropertyInfo["Property Type"]),
       };
@@ -97,6 +98,7 @@ function mapPropertyInfoToColInfo(enumData) {
       return {
         headerName: PropertyInfo["Display Name"],
         field: PropertyInfo["Display Name"],
+        colId:PropertyInfo["Property Name"],
         editable: !isReadOnly(PropertyInfo["Property Type"]),
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -110,34 +112,9 @@ function mapPropertyInfoToColInfo(enumData) {
   };
 }
 
-function mapPropertyName() {
-  return function (PropertyInfo) {
-    if (PropertyInfo["Data Type"] !== "Enum") {
-      return {
-        PropertyName: PropertyInfo["Property Name"],
-        DisplayName:PropertyInfo["Display Name"],
-        
-      };
-    } else {
-      return {
-        PropertyName: PropertyInfo["Property Name"],
-        DisplayName:PropertyInfo["Display Name"],
-        
-        
-      }
-      ;
-    }
-  };
-}
 
-export async function fetchPropInfo(rawColData) {
-  if (rawColData !== undefined && rawColData !== null) {
-    return rawColData.map(mapPropertyName());
-    //setRawColData(rawColData);
-    
-    
-  }
-}
+
+
 
  
  
