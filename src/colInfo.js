@@ -89,6 +89,7 @@ function mapPropertyInfoToColInfo(enumData) {
   return function (PropertyInfo) {
     if (PropertyInfo["Data Type"] !== "Enum") {
       return {
+
         headerName: PropertyInfo["Display Name"],
         colId:PropertyInfo["Property Name"],
         field: PropertyInfo["Display Name"],
@@ -103,11 +104,10 @@ function mapPropertyInfoToColInfo(enumData) {
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
           values: enumData.get(PropertyInfo["Property Name"])
-          
+
+
         }
-        
-      }
-      ;
+      };
     }
   };
 }
