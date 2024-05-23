@@ -10,5 +10,5 @@ Ensure you have Node.js installed on your machine. You can download it from [Nod
 
 First, you need to create a new React app. Open your terminal and run the following command:
 
-### 'npm install create-react-app <app_name>'
-### 'cd <app_name>,
+### `npm install create-react-app <app_name>`
+### `cd <app_name>`
