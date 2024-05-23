@@ -27,8 +27,8 @@ This command installs both the AG-Grid Community library and its React bindings.
 
 To ensure AG-Grid displays correctly, you need to import the necessary CSS files. Add these lines to your main component file (usually `App.js`):
 
-# `import "ag-grid-community/styles/ag-grid.css";`
-# `import "ag-grid-community/styles/ag-theme-quartz.css";`
+#### `import "ag-grid-community/styles/ag-grid.css";`
+#### `import "ag-grid-community/styles/ag-theme-quartz.css";`
 
 There are themes other than `quartz`. For more information, you can checkout https://www.ag-grid.com/javascript-data-grid/themes/
 
