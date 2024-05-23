@@ -24,7 +24,7 @@ const fetchEnumValues = async (enumName, callback, defaultClient) => {
   }
   await fetchRawEnumData(enumName, callback, defaultClient);
 };
-
+// To fetch Dropdown Vales
 async function fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData) {
 
   const callbackEnumValues = function (error, data, response) {
@@ -43,6 +43,7 @@ async function fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumDa
       }
     };
   }
+  
 
   let enumValues = rawColData
     .filter((PropertyInfo) => {
@@ -56,6 +57,8 @@ async function fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumDa
 
   }
 }
+
+
 
 
 function getDataType(dataType) {
@@ -81,31 +84,28 @@ function isReadOnly(propertyType) {
   }
 }
 
-
+//To map "Display Names" to the headers of corresponding tables from "PropertyInfo" table
 function mapPropertyInfoToColInfo(enumData) {
   return function (PropertyInfo) {
     if (PropertyInfo["Data Type"] !== "Enum") {
       return {
-        propName: PropertyInfo["Property Name"],
-        headerInfo:
-        {
-          headerName: PropertyInfo["Display Name"],
-          field: PropertyInfo["Display Name"],
-          editable: !isReadOnly(PropertyInfo["Property Type"]),
-        }
+
+        headerName: PropertyInfo["Display Name"],
+        colId:PropertyInfo["Property Name"],
+        field: PropertyInfo["Display Name"],
+        editable: !isReadOnly(PropertyInfo["Property Type"]),
       };
     } else {
       return {
-        propName: PropertyInfo["Property Name"],
-        headerInfo:
-        {
-          headerName: PropertyInfo["Display Name"],
-          field: PropertyInfo["Display Name"],
-          editable: !isReadOnly(PropertyInfo["Property Type"]),
-          cellEditor: 'agSelectCellEditor',
-          cellEditorParams: {
-            values: enumData.get(PropertyInfo["Property Name"])
-          }
+        headerName: PropertyInfo["Display Name"],
+        field: PropertyInfo["Display Name"],
+        colId:PropertyInfo["Property Name"],
+        editable: !isReadOnly(PropertyInfo["Property Type"]),
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: enumData.get(PropertyInfo["Property Name"])
+
+
         }
       };
     }
@@ -113,18 +113,24 @@ function mapPropertyInfoToColInfo(enumData) {
 }
 
 
+
+
+
  
  
 
-
+//Fetches Column information of the specified Table and then Calls mapPropertyInfoToColInfo
 export function fetchColInfo(rawColData, enumData) {
   if (rawColData !== undefined && rawColData !== null) {
-    console.log("Rawdata:",rawColData);
+    console.log("rawData:",rawColData);
+    //setRawColData(rawColData);
     return rawColData.map(mapPropertyInfoToColInfo(enumData));
     
   }
 }
 
+
+//To fetch Dropdown vales
 export async function callFetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData) {
   await fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData);
 }
@@ -144,6 +150,9 @@ export async function fetchColData(
         setRawColData(data);
         console.log("Data:",data);
         handleSuccess(response);
+
+
+        
       }
     };
 
@@ -163,3 +172,6 @@ export async function fetchColData(
 
   await fetchRawColData(defaultClient, tableName, setRawColData);
 }
+
+
+
