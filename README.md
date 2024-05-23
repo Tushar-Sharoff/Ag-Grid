@@ -19,7 +19,7 @@ Replace `<app_name>` with your desired project name.
 
 Navigate to your project directory and install AG-Grid Community using npm:
 
-###`npm install --save ag-grid-react ag-grid-community` 
+### `npm install --save ag-grid-react ag-grid-community` 
 
 This command installs both the AG-Grid Community library and its React bindings.
 
