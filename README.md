@@ -38,17 +38,10 @@ The `ag-theme-quartz.css` is one of the themes provided by AG-Grid. You can choo
 
 Now, you can start using AG-Grid in your React components. Here's a simple example of how to render a grid:
 
-`import React, { useState } from 'react'; import { AgGridReact } from 'ag-grid-react';
+![image](https://github.com/Tushar-Sharoff/Ag-Grid/assets/164136322/2267b87d-d1c7-44e4-aa84-63372f9a6352)
 
-function App() { const [rowData, setRowData] = useState([ { make: "Tesla", model: "Model S", price: 70000 }, { make: "Ford", model: "Mustang", price: 35000 }, { make: "Audi", model: "R8", price: 115000 } ]);
 
-const columnDefs = [ { headerName: "Make", field: "make" }, { headerName: "Model", field: "model" }, { headerName: "Price", field: "price" } ];
-
-return ( <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}> <AgGridReact rowData={rowData} columnDefs={columnDefs} /> </div> ); }
-
-export default App;`
-
-This example sets up a basic grid with three columns ("Make", "Model", "Price") and three rows of car data.
+This example sets up a basic grid with three columns ("Make", "Model", "Price") and four rows of car data.
 
 ## Running Your Application
 
