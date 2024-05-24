@@ -1,14 +1,14 @@
+
 import React, { useEffect, useState,useCallback } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css"; 
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import CustomHeaderCheckbox from "./CustomHeaderSelection";
 import { ApiClient, DefaultApi } from "@anansi-lineage/anansi-sdk";
-import { fetchColData, fetchColInfo, callFetchAllEnumValues} from "./colInfo";
-
+import { fetchColData, fetchColInfo,getDataType, callFetchAllEnumValues} from "./colInfo";
 
 export const Table = () => {
-
+ 
 //Required states
  const [init, setInit] = useState(false);
  const [rawColData, setRawColData] = useState();
@@ -16,13 +16,14 @@ export const Table = () => {
  const [gridApi, setGridApi] = useState(null);
  const [gridColumnApi, setGridColumnApi] = useState(null);
  const [sortModel, setSortModel] = useState([]);
+ const [filterModel, setFilterModel] = useState([]);
  
  
  
  
  var apiClient = new ApiClient();
  apiClient.basePath = "https://datalineage2.azurewebsites.net";
- apiClient.authentications["JWT"].apiKey = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiI3NTM1NWM4MS04NTk4LTRiNTEtYjM3ZC05ZGFhMWFkZDU4NjciLCJuYW1lIjoiVHVzaGFyIFNSIiwiZW1haWxzIjpbInR1c2hhci5zckBzdWtldGEuaW4iXSwidGZwIjoiQjJDXzFfc2lnbnVwX3NpZ25pbiIsIm5vbmNlIjoiMSIsInNjcCI6InJlYWQiLCJhenAiOiJjOTBmZWQyMS1iMzhhLTQ5ZDctODE2Ni05MzBlZTg3ZjFiMmUiLCJ2ZXIiOiIxLjAiLCJpYXQiOjE3MTU3NjE3OTMsImF1ZCI6ImM5MGZlZDIxLWIzOGEtNDlkNy04MTY2LTkzMGVlODdmMWIyZSIsImV4cCI6MTcxNTc2NTM5MywiaXNzIjoiaHR0cHM6Ly9hbmFuc2lodWIuYjJjbG9naW4uY29tLzhlYzE4OWRmLTdkMTYtNDA2NC1hMDJlLTVmYTYzYjY1MWEzZi92Mi4wLyIsIm5iZiI6MTcxNTc2MTc5M30.qGe_6lgJR_gfl9bqkwz-dmEmIu5_ne83dgkf3jfAyM8XjrB23s9qF6i5a7U1k_cRsVGZy8wxlYPvT76gpVe9Q_t9z6SVeoxVDJPiMVE6can7pAkvjgtMtFGYZ0GKXlFc4lxEms0etdqLwZzyEi5tNdENZBHOLNurj8SwVNw2JDlvSEsai9X1ySSPvvJ6g4krZhi5x3K2KCq1AlbqVOvje7TpmExf_vbNWVHo1ExMK1JorozECCppTAOOL8oMbGY5xWqXcXS79e4HDXUbeTXOQH0aF73aXjGH-mCJ6iFPGKulsfUY4WIh1N2wzAAB4SZoPhIow8vPZy-8pHBNkiFK-g";
+ apiClient.authentications["JWT"].apiKey = "API_TOKEN";
  apiClient.authentications["JWT"].apiKeyPrefix = "Bearer";
  const defaultClient = new DefaultApi(apiClient);
  let tableName = "PropertyInfo";
@@ -39,7 +40,54 @@ useEffect(() => {
   }
 }, [rawColData]);
 
+//to fetch filtered data using fetch method with infinite scrolling as well as sorting of filtered data
+const fetchFilteredData = async (defaultClient, tableName,startRow,endRow, filterModel,sortModel) => {
+  let filterUrl = '';
+  if (filterModel && Object.keys(filterModel).length > 0) {
+   
+    let limit=endRow-startRow;
+   
+    let filterObjects = Object.keys(filterModel);
+    let filterValues = Object.values(filterModel);
+    let searchStrvale = filterValues.map(filter => filter.filter);
+    let searchStr=searchStrvale[searchStrvale.length-1]; console.log("Search String:",searchStr);
+    let columnName = filterObjects[filterObjects.length - 1];
 
+   
+    let orderInfoOrderProp =sortModel.length > 0? sortModel[0].colId : null;
+    let orderInfoOrderType = sortModel.length > 0? sortModel[0].sort : null;
+
+    if(sortModel){
+      filterUrl = `${apiClient.basePath}/api/catalog/${tableName}?limit=${limit}&skip=${startRow}&${columnName}=~'(?i).*${searchStr}.*'&orderInfo.orderProp=${orderInfoOrderProp}&orderInfo.orderType=${orderInfoOrderType}`;
+    }
+    else{
+      
+      filterUrl = `${apiClient.basePath}/api/catalog/${tableName}?limit=${limit}&skip=${startRow}&${columnName}=~'(?i).*${searchStr}.*'`;
+    }
+  }
+  try {
+    if (filterUrl) {
+      console.log(filterUrl);
+      const response = await fetch(filterUrl, {
+        headers: {
+          Authorization: `Bearer ${apiClient.authentications["JWT"].apiKey}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json(); 
+      console.log("data inside fetchFilteredData:",data); // Convert the response body to JSON
+      const totalCount = response.headers.get('x-total-count'); // Get the total count from the headers
+      return { data, totalCount }; // Return the data and total count
+    } else {
+      // Fallback to original implementation if no filterModel is present
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 
  //Fetching data from backend (Sorted data if needed)
@@ -57,21 +105,16 @@ useEffect(() => {
       }
     };
     try {        
-    
-
-
+      
     let orderInfoOrderProp =sortModel.length > 0? sortModel[0].colId : null;//assigns the colId of the selected column for sorting
     let orderInfoOrderType = sortModel.length > 0? sortModel[0].sort : null;//assigns the sorting direction i.e., ascending or descending
-      
-    
-      
       
       defaultClient.getCatalogTablename(
         endRow - startRow,
         startRow,
         tableName,
         {
-          optionalFilter: "",
+          optionalFilter:"",
           orderInfoOrderProp: orderInfoOrderProp,
           orderInfoOrderType: orderInfoOrderType,
         },
@@ -83,26 +126,46 @@ useEffect(() => {
     }
   });
 };
-
  
-
 //Performs Infinite Scrolling by fetching data in chunks 
 const myDatasource = {
   rowCount: null,
   getRows: function(params) {
     const startRow = params.startRow;
     const endRow = params.endRow;
-    fetchData(defaultClient, tableName, startRow, endRow,params.sortModel).then(({ data, totalCount }) => {
-      let lastRow = -1;
-      if (data.length < endRow - startRow) {
-        lastRow = startRow + data.length;
-      }
-      this.rowCount = totalCount;
-      console.log(`Fetched ${data.length} rows from ${startRow} to ${lastRow}`);
-      params.successCallback(data, lastRow);
-    }).catch(error => {
-      params.failCallback();
-    });
+    const filterModel = params.filterModel;
+
+    // Fetching data with filtering applied if filterModel exists
+    if (Object.keys(filterModel).length > 0) {
+      fetchFilteredData(defaultClient, tableName,startRow,endRow, filterModel,params.sortModel)
+      .then(({ data, totalCount }) => {
+        let lastRow = -1;
+        if (data.length < endRow - startRow) {
+          lastRow = startRow + data.length;
+        }
+        this.rowCount = totalCount;
+        console.log(`Fetched ${data.length} rows from ${startRow} to ${lastRow}`);
+        params.successCallback(data, lastRow);
+      })
+       .catch(error => {
+          params.failCallback();
+        });
+    } else {
+      // Fetching data without filtering if filterModel is empty
+      fetchData(defaultClient, tableName, startRow, endRow, params.sortModel)
+       .then(({ data, totalCount }) => {
+          let lastRow = -1;
+          if (data.length < endRow - startRow) {
+            lastRow = startRow + data.length;
+          }
+          this.rowCount = totalCount;
+          console.log(`Fetched ${data.length} rows from ${startRow} to ${lastRow}`);
+          params.successCallback(data, lastRow);
+        })
+       .catch(error => {
+          params.failCallback();
+        });
+    }
   }
 };
 
@@ -112,15 +175,14 @@ const myDatasource = {
   setGridColumnApi(params.columnApi);
  }, []);
 
-
  
  const onSortChanged = useCallback((params) => {
   // Update the data source with the new sort model
   setSortModel(params.sortModel);
 }, []);
-
-
-
+const onFilterChanged = useCallback((params) => {
+  setFilterModel(params.filterModel);
+}, []);
 
  const gridOptions = {
   rowModelType: 'infinite',
@@ -134,10 +196,11 @@ const myDatasource = {
     customHeaderCheckbox:CustomHeaderCheckbox,
   },
   onSortChanged: onSortChanged,
+  onFilterChanged: onFilterChanged, 
+  
   
   
 };
-
 useEffect(() => {
   if (gridApi) {
     gridApi.setDatasource(myDatasource);
@@ -147,11 +210,13 @@ useEffect(() => {
 
 
 
-
 //To fetch Column  information such as Header Names from rawColData and also checkboxes, HeaderCheckboxes and loading spinners
  const modifiedColDefs = rawColData ? fetchColInfo(rawColData, enumData) : [];
  
-
+// Assuming modifiedColDefs is your array of column definitions fetched from fetchColInfo
+modifiedColDefs.forEach(colDef => {
+  colDef.filter = true; // Enable floating filters for each column
+});
  if (modifiedColDefs.length > 0) {
     modifiedColDefs[0].checkboxSelection = true;
     modifiedColDefs[0].cellRenderer = props => {
@@ -177,7 +242,6 @@ useEffect(() => {
     };
     modifiedColDefs[0].headerComponent = 'customHeaderCheckbox';
  }
-
  
  return (
     <div className="ag-theme-quartz" style={{ height: 600, width: '100%' }}>

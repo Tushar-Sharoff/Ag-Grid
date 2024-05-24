@@ -1,12 +1,11 @@
+
 function handleError(error) {
   console.error(error);
 }
-
 function handleSuccess(response) {
   console.log("Response was:", response);
   //console.log("API called successfully. Returned data: ", data);
 }
-
 const fetchEnumValues = async (enumName, callback, defaultClient) => {
   async function fetchRawEnumData(enumName, callback, defaultClient) {
     let temp = "enumName:'" + enumName + "'";
@@ -26,7 +25,6 @@ const fetchEnumValues = async (enumName, callback, defaultClient) => {
 };
 // To fetch Dropdown Vales
 async function fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData) {
-
   const callbackEnumValues = function (error, data, response) {
     if (error) {
       handleError(error);
@@ -44,24 +42,20 @@ async function fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumDa
     };
   }
   
-
   let enumValues = rawColData
     .filter((PropertyInfo) => {
       return PropertyInfo["Data Type"] === "Enum";
     }).map((PropertyInfo) => { return PropertyInfo["Property Name"] });
-
   if (enumValues.length !== 0) {
     await Promise.all(enumValues.map(async (enumValue) => {
       await fetchEnumValues(enumValue, callbackEnumValues, defaultClient);
     }))
-
   }
 }
 
 
 
-
-function getDataType(dataType) {
+export function getDataType(dataType) {
   if (dataType === "Boolean") {
     return "checkbox";
   } else if (dataType === "Integer" || dataType === "Float") {
@@ -72,7 +66,6 @@ function getDataType(dataType) {
     return "text";
   }
 }
-
 function isReadOnly(propertyType) {
   if (
     propertyType === "IS_IDENTITY" ||
@@ -83,13 +76,11 @@ function isReadOnly(propertyType) {
     return false;
   }
 }
-
 //To map "Display Names" to the headers of corresponding tables from "PropertyInfo" table
 function mapPropertyInfoToColInfo(enumData) {
   return function (PropertyInfo) {
     if (PropertyInfo["Data Type"] !== "Enum") {
       return {
-
         headerName: PropertyInfo["Display Name"],
         colId:PropertyInfo["Property Name"],
         field: PropertyInfo["Display Name"],
@@ -104,10 +95,11 @@ function mapPropertyInfoToColInfo(enumData) {
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
           values: enumData.get(PropertyInfo["Property Name"])
-
-
+          
         }
-      };
+        
+      }
+      ;
     }
   };
 }
@@ -115,10 +107,8 @@ function mapPropertyInfoToColInfo(enumData) {
 
 
 
-
  
  
-
 //Fetches Column information of the specified Table and then Calls mapPropertyInfoToColInfo
 export function fetchColInfo(rawColData, enumData) {
   if (rawColData !== undefined && rawColData !== null) {
@@ -129,12 +119,10 @@ export function fetchColInfo(rawColData, enumData) {
   }
 }
 
-
 //To fetch Dropdown vales
 export async function callFetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData) {
   await fetchAllEnumValues(defaultClient, rawColData, setEnumData, enumData);
 }
-
 export async function fetchColData(
   defaultClient,
   tableName,
@@ -151,11 +139,9 @@ export async function fetchColData(
         console.log("Data:",data);
         handleSuccess(response);
 
-
         
       }
     };
-
     let temp = "nodeLabel:'" + tableName + "'";
     try {
       defaultClient.getCatalogTablename(
@@ -169,9 +155,5 @@ export async function fetchColData(
       console.log(err);
     }
   }
-
   await fetchRawColData(defaultClient, tableName, setRawColData);
 }
-
-
-
