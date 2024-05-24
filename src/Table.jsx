@@ -6,8 +6,9 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import CustomHeaderCheckbox from "./CustomHeaderSelection";
 import { ApiClient, DefaultApi } from "@anansi-lineage/anansi-sdk";
 import { fetchColData, fetchColInfo,getDataType, callFetchAllEnumValues} from "./colInfo";
-import axios from "axios";
+
 export const Table = () => {
+ 
 //Required states
  const [init, setInit] = useState(false);
  const [rawColData, setRawColData] = useState();
@@ -39,16 +40,20 @@ useEffect(() => {
   }
 }, [rawColData]);
 
-//to fetcch filtered data using fetch method with infinite scrolling as well as sorting of filtered data
+//to fetch filtered data using fetch method with infinite scrolling as well as sorting of filtered data
 const fetchFilteredData = async (defaultClient, tableName,startRow,endRow, filterModel,sortModel) => {
   let filterUrl = '';
   if (filterModel && Object.keys(filterModel).length > 0) {
+   
     let limit=endRow-startRow;
+   
     let filterObjects = Object.keys(filterModel);
     let filterValues = Object.values(filterModel);
     let searchStrvale = filterValues.map(filter => filter.filter);
     let searchStr=searchStrvale[searchStrvale.length-1]; console.log("Search String:",searchStr);
     let columnName = filterObjects[filterObjects.length - 1];
+
+   
     let orderInfoOrderProp =sortModel.length > 0? sortModel[0].colId : null;
     let orderInfoOrderType = sortModel.length > 0? sortModel[0].sort : null;
 
